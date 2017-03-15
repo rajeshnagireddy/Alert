@@ -1,0 +1,6 @@
+{
+  "name": "Sample Alert",
+  "description": "Sample Alert Systemt",
+  "repository": "https://github.com/rajeshnagireddy/Alert",
+  "keywords": ["node", "alert"]
+}

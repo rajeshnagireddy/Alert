@@ -1,0 +1,29 @@
+{
+  "name": "Alert",
+  "version": "0.2.0",
+  "description": "A sample Alert System",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "cron": "^1.2.1",
+    "express": "^4.13.3"
+  },
+  "engines": {
+    "node": "4.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/rajeshnagireddy/Alert"
+  },
+  "keywords": [
+    "node",
+    "heroku",
+    "express"
+  ],
+  "author": "Rajesh Nagireddy",
+  "contributors": [
+    "Rajesh Nagireddy"
+  ]
+}
