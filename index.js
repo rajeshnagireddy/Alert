@@ -4,8 +4,23 @@ var app = express()
 var cron = require('cron');
 var request = require('request');
 var mailgun = require('mailgun-js');
+var admin = require("firebase-admin");
+var serviceAccount = require("./bitcoin-rate-chart-firebase-adminsdk-prh1h-b86a4ae7b4.json");
 var lowestBitcoin = 1000000;
 var alertPrice = 88000;
+
+admin.initializeApp({
+  credential: admin.credential.cert(serviceAccount),
+  databaseURL: "https://bitcoin-rate-chart.firebaseio.com"
+});
+
+var database = admin.database();
+var alertsRef = database.ref("/alerts");
+alertsRef.on("value", function(snapshot) {
+  var data = snapshot.val();
+  alertPrice = data.alertPrice;
+  lowestBitcoin = data.lowestPrice;
+});
 
 app.set('port', (process.env.PORT || 5000))
 app.use(express.static(__dirname + '/public'))
@@ -24,13 +39,17 @@ function checkBitCoinPrice() {
 	    	var body = JSON.parse(body);
 	    	if(lowestBitcoin > body.buy) {
 	    		lowestBitcoin = body.buy;
+	    		updateLowestPrice(body.buy);
 	    		console.log('updated --> ' +  body.buy);
 	    	}
 
 	    	if(body.buy < alertPrice) {
 	    		alertPrice-=500;
+	    		updateAlertPrice(alertPrice);
 	    		sendMail();
 	    	}
+
+	    	addPriceToChart(body);
 	    }
 	})
 }
@@ -42,13 +61,34 @@ function sendMail() {
 	 
 	var data = {
 	  from: 'Bit coin Alert <bitalert@alert.mailgun.org>',
-	  to: 'rajesh.impalerts@gmail.com',
+	  to: 'rajesh.impalerts@gmail.com,rajesh.rnagireddy@gmail.com,rajesh.nagireddy@practo.com',
 	  subject: "Bit Coin Lowest Price " + lowestBitcoin,
 	  text: 'Lowest Bitcoin as of now is ' + lowestBitcoin
 	};
 
 	mailgun.messages().send(data, function (error, body) {
 	  console.log(body);
+	});
+}
+
+function updateLowestPrice(price) {
+	alertsRef.update({
+		lowestPrice : price,
+		modifiedAt: {".sv":"timestamp"}
+	})
+}
+
+function updateAlertPrice(price) {
+	alertsRef.update({
+		alertPrice : price,
+	})	
+}
+
+function addPriceToChart(response) {
+	database.ref().child('/rateChart').push().set({
+		buy : response.buy,
+		sell : response.sell,
+		createdAt : {".sv":"timestamp"} 
 	});
 }
 
@@ -59,6 +99,5 @@ var job1 = new cron.CronJob({
   timeZone: 'America/Los_Angeles'
 });
 
-job1.start(); 
-checkBitCoinPrice();
+job1.start();
 console.log('job1 status', job1.running);
