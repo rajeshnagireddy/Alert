@@ -1,6 +1,6 @@
 var express = require('express')
 var app = express()
-//var cron = require('cron');
+var cron = require('cron');
 
 app.set('port', (process.env.PORT || 5000))
 app.use(express.static(__dirname + '/public'))
