@@ -88,6 +88,8 @@ function addPriceToChart(response) {
 	database.ref().child('/rateChart').push().set({
 		buy : response.buy,
 		sell : response.sell,
+		market : response.market,
+		volume : response.volume,
 		createdAt : {".sv":"timestamp"} 
 	});
 }
