@@ -8,6 +8,7 @@ var admin = require("firebase-admin");
 var serviceAccount = require("./bitcoin-rate-chart-firebase-adminsdk-prh1h-b86a4ae7b4.json");
 var lowestBitcoin = 1000000;
 var alertPrice = 88000;
+var sellAlertPrice = 90000;
 
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
@@ -46,6 +47,11 @@ function checkBitCoinPrice() {
 	    	if(body.buy < alertPrice) {
 	    		alertPrice-=500;
 	    		updateAlertPrice(alertPrice);
+	    		sendMail();
+	    	}
+
+	    	if(body.sell > sellAlertPrice) {
+	    		sellAlertPrice+=500;
 	    		sendMail();
 	    	}
 
