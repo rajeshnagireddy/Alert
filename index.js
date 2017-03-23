@@ -63,7 +63,7 @@ function checkBitCoinPrice() {
 function sendMail() {
 	var api_key = 'key-f6e2d6584d6c0224aa5618cb081041d3';
 	var domain = 'sandboxb93db37f6137404d895582a2f8e399ca.mailgun.org';
-	var mailgun = require('mailgun-js')({apiKey: api_key, domain: domain});
+	//var mailgun = require('mailgun-js')({apiKey: api_key, domain: domain});
 	 
 	var data = {
 	  from: 'Bit coin Alert <bitalert@alert.mailgun.org>',
@@ -72,9 +72,9 @@ function sendMail() {
 	  text: 'Lowest Bitcoin as of now is ' + lowestBitcoin
 	};
 
-	mailgun.messages().send(data, function (error, body) {
-	  console.log(body);
-	});
+	// mailgun.messages().send(data, function (error, body) {
+	//   console.log(body);
+	// });
 }
 
 function updateLowestPrice(price) {
